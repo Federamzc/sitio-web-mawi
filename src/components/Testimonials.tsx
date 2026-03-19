@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useState, useRef } from "react";
+import { ArrowLeft, ArrowRight, Star } from "lucide-react";
 
 const testimonials = [
   {
@@ -9,155 +10,196 @@ const testimonials = [
     name: "Carlos Mendoza",
     title: "Director General",
     company: "Emesol Chile",
-    country: "CL",
-    stat: "0% sobrecosto · 8 meses",
+    flag: "🇨🇱",
+    stat: "0% sobrecosto en 8 meses",
+    color: "#FF4E00",
   },
   {
     quote: "Mi equipo administrativo recuperó 4 horas diarias que perdían en reportes manuales. Ahora ese tiempo lo usan en cosas que realmente importan.",
     name: "Ana Rodríguez",
     title: "Directora de Proyectos",
     company: "AUREA",
-    country: "CR",
+    flag: "🇨🇷",
     stat: "4h/día recuperadas",
+    color: "#911ECC",
   },
   {
     quote: "La visibilidad en tiempo real cambió cómo tomamos decisiones. Cuando hay una desviación la vemos al instante y actuamos de inmediato.",
     name: "Roberto Fonseca",
     title: "Gerente de Obra",
     company: "CORE Build",
-    country: "MX",
+    flag: "🇲🇽",
     stat: "Decisiones 3× más rápidas",
+    color: "#3b82f6",
   },
   {
     quote: "Intentamos 3 softwares antes de Mawi. Ninguno entendía la complejidad de construcción en LATAM. Mawi sí. El ROI llegó en 45 días.",
     name: "Marcela Torres",
     title: "CFO",
     company: "Grupo Andino",
-    country: "CO",
+    flag: "🇨🇴",
     stat: "ROI en 45 días",
-  },
-  {
-    quote: "El onboarding duró 2 días. Al tercer día mi equipo ya estaba trabajando en Mawi con cero fricción. Nunca había visto una adopción tan rápida.",
-    name: "Diego Herrera",
-    title: "Gerente General",
-    company: "ProObra",
-    country: "PE",
-    stat: "2 días de onboarding",
+    color: "#22c55e",
   },
   {
     quote: "Las alertas automáticas de sobrecosto nos salvaron en un proyecto clave. Sin Mawi, hubiera costado $180k más. El sistema se pagó solo.",
     name: "Patricia Vega",
     title: "Presidenta",
     company: "BuildCo",
-    country: "AR",
+    flag: "🇦🇷",
     stat: "$180K en sobrecostos evitados",
+    color: "#f59e0b",
+  },
+  {
+    quote: "El onboarding duró 2 días. Al tercer día mi equipo ya estaba operando en Mawi con cero fricción. Nunca había visto una adopción tan rápida.",
+    name: "Diego Herrera",
+    title: "Gerente General",
+    company: "ProObra",
+    flag: "🇵🇪",
+    stat: "2 días de onboarding",
+    color: "#06b6d4",
   },
 ];
 
-function TestimonialCard({ t, delay }: { t: typeof testimonials[0]; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.5, delay }}
-      className="card p-6 flex flex-col gap-4 hover:bg-white/6 transition-colors duration-300 w-80 flex-shrink-0"
-    >
-      {/* Stars */}
-      <div className="flex gap-0.5">
-        {Array(5).fill(0).map((_, i) => (
-          <svg key={i} width="12" height="12" viewBox="0 0 12 12" fill="#FF4E00">
-            <path d="M6 0.5l1.545 3.13 3.455.503-2.5 2.437.59 3.43L6 8.385l-3.09 1.625.59-3.43L1 3.133l3.455-.503L6 .5z" />
-          </svg>
-        ))}
-      </div>
-
-      <p className="text-white/60 text-sm leading-relaxed flex-1">&ldquo;{t.quote}&rdquo;</p>
-
-      {/* Stat pill */}
-      <div className="inline-flex self-start bg-[#FF4E00]/10 border border-[#FF4E00]/20 rounded-full px-3 py-1">
-        <span className="text-[#FF4E00] text-xs font-semibold">{t.stat}</span>
-      </div>
-
-      <div className="flex items-center gap-3 pt-1 border-t border-white/6">
-        <div className="w-8 h-8 rounded-full gradient-brand flex items-center justify-center flex-shrink-0">
-          <span className="text-white font-bold text-xs">{t.name[0]}</span>
-        </div>
-        <div>
-          <p className="text-white font-medium text-sm leading-none mb-0.5">{t.name}</p>
-          <p className="text-white/35 text-xs">{t.title} · {t.company}</p>
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function Testimonials() {
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-80px" });
 
-  return (
-    <section id="testimonios" className="section-pad-lg bg-[#13102A] relative overflow-hidden" ref={ref}>
-      <div className="absolute inset-0 bg-dots opacity-20" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-[#FF4E00] opacity-[0.04] blur-[120px] rounded-full pointer-events-none" />
+  const go = (dir: 1 | -1) => {
+    setDirection(dir);
+    setIndex((prev) => (prev + dir + testimonials.length) % testimonials.length);
+  };
 
-      <div className="container-xl relative z-10 mb-14">
+  const t = testimonials[index];
+
+  return (
+    <section id="testimonios" className="section-pad-lg bg-[#080614] relative overflow-hidden" ref={ref}>
+      <div className="absolute inset-0 bg-dots opacity-20" />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] opacity-[0.05] blur-[120px] rounded-full pointer-events-none transition-colors duration-700"
+        style={{ backgroundColor: t.color }}
+      />
+
+      <div className="container-xl relative z-10">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto"
+          className="text-center max-w-2xl mx-auto mb-16"
         >
-          <div className="inline-flex items-center gap-2 bg-white/6 border border-white/10 rounded-full px-4 py-1.5 mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#FF4E00]" />
-            <span className="text-white/60 text-xs font-semibold uppercase tracking-wider">Casos de éxito</span>
-          </div>
-          <h2 className="text-h2 text-white mb-5">
-            Resultados reales,{" "}
-            <span className="text-gradient">empresas reales</span>
+          <p className="text-white/30 text-xs uppercase tracking-[0.15em] font-medium mb-4">
+            Casos de éxito
+          </p>
+          <h2 className="text-h2 text-white mb-4">
+            No confíes en nosotros.{" "}
+            <span className="text-gradient">Confía en ellos.</span>
           </h2>
-          <p className="text-body-lg text-white/50">
-            Más de 20 constructoras en LATAM ya transformaron su control presupuestal.
+          <p className="text-white/45 text-lg">
+            Más de 50 constructoras en LATAM ya transformaron su operación con Mawi.
           </p>
         </motion.div>
-      </div>
 
-      {/* Scrolling rows */}
-      <div className="relative">
-        <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#13102A] to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#13102A] to-transparent z-10 pointer-events-none" />
+        {/* Carousel — Ramp style */}
+        <div className="max-w-3xl mx-auto">
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={index}
+              custom={direction}
+              variants={{
+                enter: (d: number) => ({ opacity: 0, x: d > 0 ? 40 : -40 }),
+                center: { opacity: 1, x: 0 },
+                exit: (d: number) => ({ opacity: 0, x: d > 0 ? -40 : 40 }),
+              }}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="bg-[#0D0A1A] border border-white/8 rounded-2xl p-8 lg:p-10"
+            >
+              {/* Stars */}
+              <div className="flex gap-1 mb-6">
+                {Array(5).fill(0).map((_, i) => (
+                  <Star key={i} size={14} fill="#FF4E00" className="text-[#FF4E00]" />
+                ))}
+              </div>
 
-        {/* Row 1 */}
-        <div className="flex gap-3 mb-3 overflow-hidden">
-          <motion.div
-            className="flex gap-3"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-          >
-            {[...testimonials.slice(0, 3), ...testimonials.slice(0, 3)].map((t, i) => (
-              <TestimonialCard key={`r1-${i}`} t={t} delay={0} />
-            ))}
-          </motion.div>
+              <blockquote className="text-xl lg:text-2xl text-white/80 leading-relaxed font-medium mb-8">
+                &ldquo;{t.quote}&rdquo;
+              </blockquote>
+
+              {/* Stat highlight */}
+              <div
+                className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-8"
+                style={{ backgroundColor: `${t.color}12`, border: `1px solid ${t.color}25` }}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: t.color }} />
+                <span className="text-sm font-semibold" style={{ color: t.color }}>{t.stat}</span>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm"
+                    style={{ background: `linear-gradient(135deg, ${t.color}, #911ECC)` }}
+                  >
+                    {t.name[0]}
+                  </div>
+                  <div>
+                    <p className="text-white font-semibold text-sm">{t.name} {t.flag}</p>
+                    <p className="text-white/35 text-xs">{t.title} · {t.company}</p>
+                  </div>
+                </div>
+                <span className="text-white/20 text-sm">{index + 1} / {testimonials.length}</span>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Controls */}
+          <div className="flex items-center justify-between mt-6">
+            {/* Dots */}
+            <div className="flex gap-1.5">
+              {testimonials.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setDirection(i > index ? 1 : -1); setIndex(i); }}
+                  className="w-1.5 h-1.5 rounded-full transition-all duration-200"
+                  style={{ backgroundColor: i === index ? t.color : "rgba(255,255,255,0.15)" }}
+                />
+              ))}
+            </div>
+
+            {/* Prev / Next */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => go(-1)}
+                className="w-10 h-10 rounded-full border border-white/10 hover:border-white/25 flex items-center justify-center text-white/50 hover:text-white transition-all"
+              >
+                <ArrowLeft size={16} />
+              </button>
+              <button
+                onClick={() => go(1)}
+                className="w-10 h-10 rounded-full border border-white/10 hover:border-white/25 flex items-center justify-center text-white/50 hover:text-white transition-all"
+              >
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* Row 2 */}
-        <div className="flex gap-3 overflow-hidden">
-          <motion.div
-            className="flex gap-3"
-            animate={{ x: ["-50%", "0%"] }}
-            transition={{ duration: 40, ease: "linear", repeat: Infinity }}
-          >
-            {[...testimonials.slice(3), ...testimonials.slice(3)].map((t, i) => (
-              <TestimonialCard key={`r2-${i}`} t={t} delay={0} />
-            ))}
-          </motion.div>
-        </div>
-      </div>
-
-      <div className="relative z-10 text-center mt-12">
-        <a href="#demo" className="btn-primary">
-          Únete a estas empresas — Agenda tu demo
-        </a>
+        {/* Bottom CTA */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.4 }}
+          className="text-center mt-14"
+        >
+          <a href="#demo" className="btn-primary">
+            Únete a estas empresas
+            <ArrowRight size={15} />
+          </a>
+        </motion.div>
       </div>
     </section>
   );
