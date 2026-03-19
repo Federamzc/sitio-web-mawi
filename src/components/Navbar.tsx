@@ -8,9 +8,9 @@ const nav = [
   {
     label: "Producto", children: [
       { label: "Control Presupuestal", desc: "Visibilidad en tiempo real" },
-      { label: "Órdenes de Compra", desc: "Aprueba desde el móvil" },
-      { label: "Reportes", desc: "Automáticos, sin esfuerzo" },
-      { label: "Integraciones", desc: "QuickBooks, SAP y más" },
+      { label: "Órdenes de Compra",    desc: "Aprueba desde el móvil" },
+      { label: "Reportes",             desc: "Automáticos, sin esfuerzo" },
+      { label: "Integraciones",        desc: "QuickBooks, SAP y más" },
     ]
   },
   { label: "Soluciones" },
@@ -19,9 +19,9 @@ const nav = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [dropdown, setDropdown] = useState<string | null>(null);
+  const [scrolled,  setScrolled]  = useState(false);
+  const [open,      setOpen]      = useState(false);
+  const [dropdown,  setDropdown]  = useState<string | null>(null);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 10);
@@ -33,12 +33,13 @@ export default function Navbar() {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-[#0D0A1A]/90 backdrop-blur-xl border-b border-white/8"
+          ? "bg-[#080514]/92 backdrop-blur-xl border-b border-white/6"
           : "bg-transparent"
       }`}
     >
       <div className="container-xl">
         <div className="flex items-center justify-between h-16 lg:h-[68px]">
+
           {/* Logo */}
           <a href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <div className="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center">
@@ -50,13 +51,17 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {nav.map((item) => (
-              <div key={item.label} className="relative"
+              <div
+                key={item.label}
+                className="relative"
                 onMouseEnter={() => item.children && setDropdown(item.label)}
                 onMouseLeave={() => setDropdown(null)}
               >
-                <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white/70 hover:text-white transition-colors rounded-lg hover:bg-white/5 cursor-pointer">
+                <button className="flex items-center gap-1 px-4 py-2 text-sm font-medium text-white/55 hover:text-white transition-colors rounded-lg hover:bg-white/5 cursor-pointer">
                   {item.label}
-                  {item.children && <ChevronDown size={14} className={`transition-transform ${dropdown === item.label ? "rotate-180" : ""}`} />}
+                  {item.children && (
+                    <ChevronDown size={13} className={`transition-transform ${dropdown === item.label ? "rotate-180" : ""}`} />
+                  )}
                 </button>
                 {item.children && (
                   <AnimatePresence>
@@ -66,12 +71,12 @@ export default function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 8, scale: 0.97 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute top-full left-0 mt-1 w-64 bg-[#13102A] border border-white/10 rounded-xl shadow-2xl overflow-hidden"
+                        className="absolute top-full left-0 mt-1 w-64 bg-[#0F0B20] border border-white/8 rounded-xl shadow-2xl overflow-hidden"
                       >
                         {item.children.map((child) => (
-                          <a key={child.label} href="#" className="flex flex-col px-4 py-3 hover:bg-white/5 transition-colors">
-                            <span className="text-sm font-medium text-white">{child.label}</span>
-                            <span className="text-xs text-white/40 mt-0.5">{child.desc}</span>
+                          <a key={child.label} href="#" className="flex flex-col px-4 py-3 hover:bg-white/4 transition-colors group">
+                            <span className="text-sm font-medium text-white/80 group-hover:text-white">{child.label}</span>
+                            <span className="text-xs text-white/30 mt-0.5">{child.desc}</span>
                           </a>
                         ))}
                       </motion.div>
@@ -84,7 +89,7 @@ export default function Navbar() {
 
           {/* CTAs */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href="#" className="text-sm font-medium text-white/60 hover:text-white transition-colors px-3 py-2">
+            <a href="#" className="text-sm font-medium text-white/45 hover:text-white transition-colors px-3 py-2">
               Iniciar sesión
             </a>
             <a href="#demo" className="btn-primary text-sm px-5 py-2.5">
@@ -94,7 +99,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <button
-            className="lg:hidden p-2 text-white/70 hover:text-white transition-colors"
+            className="lg:hidden p-2 text-white/50 hover:text-white transition-colors"
             onClick={() => setOpen(!open)}
             aria-label={open ? "Cerrar menú" : "Abrir menú"}
           >
@@ -110,18 +115,18 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-[#0D0A1A] border-t border-white/8"
+            className="lg:hidden bg-[#080514] border-t border-white/6"
           >
             <div className="container-xl py-4 flex flex-col gap-1">
               {nav.map((item) => (
                 <a key={item.label} href="#" onClick={() => setOpen(false)}
-                  className="px-3 py-3 text-white/70 hover:text-white font-medium transition-colors rounded-lg hover:bg-white/5">
+                  className="px-3 py-3 text-white/55 hover:text-white font-medium transition-colors rounded-lg hover:bg-white/4">
                   {item.label}
                 </a>
               ))}
-              <div className="pt-3 border-t border-white/8 mt-2 flex flex-col gap-2">
-                <a href="#" className="btn-secondary w-full text-center">Iniciar sesión</a>
-                <a href="#demo" className="btn-primary w-full text-center" onClick={() => setOpen(false)}>Agendar demo</a>
+              <div className="pt-3 border-t border-white/6 mt-2 flex flex-col gap-2">
+                <a href="#" className="btn-secondary w-full text-center text-sm py-3">Iniciar sesión</a>
+                <a href="#demo" className="btn-primary w-full text-center text-sm py-3" onClick={() => setOpen(false)}>Agendar demo</a>
               </div>
             </div>
           </motion.div>
