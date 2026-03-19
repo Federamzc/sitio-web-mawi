@@ -1,11 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { Check, Zap, ArrowRight } from "lucide-react";
-import { MovingBorder } from "@/components/ui/moving-border";
-import { BlurFade } from "@/components/ui/blur-fade";
 
 const plans = [
   {
@@ -66,137 +63,125 @@ const plans = [
 
 export default function Pricing() {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-100px" });
+  const inView = useInView(ref, { once: true, margin: "-80px" });
   const [annual, setAnnual] = useState(true);
 
   return (
-    <section id="precios" className="py-28 bg-slate-50" ref={ref}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <BlurFade inView delay={0}>
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <span className="inline-block bg-orange-100 text-[#FF4E00] text-xs font-semibold px-4 py-1.5 rounded-full mb-4 uppercase tracking-wider">
-              Precios
-            </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1D062F] mb-4">
-              Simple, transparente,{" "}
-              <span className="gradient-text">sin sorpresas</span>
-            </h2>
-            <p className="text-slate-500 text-lg mb-8">
-              30 días de prueba gratis. Sin tarjeta de crédito. Cancela cuando quieras.
-            </p>
+    <section id="precios" className="section-pad-lg bg-[#0D0A1A] relative" ref={ref}>
+      <div className="absolute inset-0 bg-dots opacity-25" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] bg-[#911ECC] opacity-[0.05] blur-[100px] rounded-full pointer-events-none" />
 
-            {/* Toggle */}
-            <div className="inline-flex items-center gap-1 bg-white border border-slate-200 rounded-full p-1 shadow-sm">
-              <button
-                onClick={() => setAnnual(false)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${!annual ? "bg-[#1D062F] text-white shadow" : "text-slate-500"}`}
-              >
-                Mensual
-              </button>
-              <button
-                onClick={() => setAnnual(true)}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${annual ? "bg-[#1D062F] text-white shadow" : "text-slate-500"}`}
-              >
-                Anual
-                <span className="bg-[#FF4E00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">−20%</span>
-              </button>
-            </div>
+      <div className="container-xl relative z-10">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-3xl mx-auto mb-12"
+        >
+          <div className="inline-flex items-center gap-2 bg-[#911ECC]/10 border border-[#911ECC]/20 rounded-full px-4 py-1.5 mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#911ECC]" />
+            <span className="text-[#911ECC] text-xs font-semibold uppercase tracking-wider">Precios</span>
           </div>
-        </BlurFade>
+          <h2 className="text-h2 text-white mb-5">
+            Simple, transparente,{" "}
+            <span className="text-gradient">sin sorpresas</span>
+          </h2>
+          <p className="text-body-lg text-white/50 mb-8">
+            30 días de prueba gratis. Sin tarjeta de crédito. Cancela cuando quieras.
+          </p>
 
-        <div className="grid lg:grid-cols-3 gap-6 items-center">
+          {/* Toggle */}
+          <div className="inline-flex items-center gap-1 bg-white/5 border border-white/10 rounded-full p-1">
+            <button
+              onClick={() => setAnnual(false)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${!annual ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+            >
+              Mensual
+            </button>
+            <button
+              onClick={() => setAnnual(true)}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${annual ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"}`}
+            >
+              Anual
+              <span className="bg-[#FF4E00] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">−20%</span>
+            </button>
+          </div>
+        </motion.div>
+
+        {/* Plans */}
+        <div className="grid lg:grid-cols-3 gap-4 items-start">
           {plans.map((plan, i) => (
             <motion.div
               key={plan.name}
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
+              transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
+              className={`relative rounded-2xl p-8 flex flex-col ${
+                plan.highlight
+                  ? "bg-[#13102A] border border-[#FF4E00]/30 shadow-2xl shadow-[#FF4E00]/10"
+                  : "card"
+              }`}
             >
-              {plan.highlight ? (
-                /* Pro plan with MovingBorder */
-                <MovingBorder
-                  as="div"
-                  containerClassName="h-auto w-full rounded-2xl bg-[#1D062F] p-[1px]"
-                  className="bg-[#1D062F] rounded-2xl p-8 flex flex-col relative"
-                  duration={3000}
-                  rx="16"
-                >
-                  {/* Badge */}
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="flex items-center gap-1.5 bg-[#FF4E00] text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg">
-                      <Zap size={11} fill="white" />
-                      {plan.badge}
-                    </span>
-                  </div>
-
-                  <div className="mb-6 pt-2">
-                    <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
-                    <p className="text-white/50 text-sm mb-4">{plan.desc}</p>
-                    <div className="flex items-baseline gap-1 mb-1">
-                      <span className="text-4xl font-bold text-white">
-                        ${annual ? plan.price.annual : plan.price.monthly}
-                      </span>
-                      <span className="text-white/40 text-sm">USD/mes</span>
-                    </div>
-                    <p className="text-white/30 text-xs">{plan.capacity}</p>
-                  </div>
-
-                  <ul className="space-y-2.5 mb-8 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <Check size={15} className="text-[#FF4E00] mt-0.5 flex-shrink-0" />
-                        <span className="text-white/70 text-sm">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <a href="#demo" className="w-full flex items-center justify-center gap-2 bg-[#FF4E00] hover:bg-[#e04400] text-white font-semibold py-3.5 rounded-xl transition-colors group">
-                    {plan.cta}
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </a>
-                </MovingBorder>
-              ) : (
-                <div className="bg-white rounded-2xl p-8 border border-slate-100 shadow-sm hover:shadow-md transition-shadow flex flex-col h-full">
-                  <div className="mb-6">
-                    <h3 className="text-xl font-bold text-[#1D062F] mb-1">{plan.name}</h3>
-                    <p className="text-slate-400 text-sm mb-4">{plan.desc}</p>
-                    {plan.price.monthly ? (
-                      <div className="flex items-baseline gap-1 mb-1">
-                        <span className="text-4xl font-bold text-[#1D062F]">
-                          ${annual ? plan.price.annual : plan.price.monthly}
-                        </span>
-                        <span className="text-slate-400 text-sm">USD/mes</span>
-                      </div>
-                    ) : (
-                      <p className="text-3xl font-bold text-[#1D062F] mb-1">Personalizado</p>
-                    )}
-                    <p className="text-slate-400 text-xs">{plan.capacity}</p>
-                  </div>
-
-                  <ul className="space-y-2.5 mb-8 flex-1">
-                    {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2">
-                        <Check size={15} className="text-[#911ECC] mt-0.5 flex-shrink-0" />
-                        <span className="text-slate-600 text-sm">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <a href="#demo" className="w-full flex items-center justify-center gap-2 bg-[#1D062F] hover:bg-[#2d0a4a] text-white font-semibold py-3.5 rounded-xl transition-colors group">
-                    {plan.cta}
-                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </a>
+              {plan.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="flex items-center gap-1.5 bg-[#FF4E00] text-white text-xs font-bold px-4 py-1.5 rounded-full shadow-lg shadow-[#FF4E00]/30">
+                    <Zap size={11} fill="white" />
+                    {plan.badge}
+                  </span>
                 </div>
               )}
+
+              <div className="mb-6 pt-1">
+                <h3 className="text-xl font-bold text-white mb-1">{plan.name}</h3>
+                <p className="text-white/40 text-sm mb-5">{plan.desc}</p>
+                {plan.price.monthly ? (
+                  <div className="flex items-baseline gap-1 mb-1">
+                    <span className="text-4xl font-bold text-white">
+                      ${annual ? plan.price.annual : plan.price.monthly}
+                    </span>
+                    <span className="text-white/35 text-sm">USD/mes</span>
+                  </div>
+                ) : (
+                  <p className="text-3xl font-bold text-white mb-1">Personalizado</p>
+                )}
+                <p className="text-white/25 text-xs">{plan.capacity}</p>
+              </div>
+
+              <ul className="space-y-2.5 mb-8 flex-1">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-start gap-2.5">
+                    <div className="w-4 h-4 rounded-full bg-[#FF4E00]/15 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <Check size={10} className="text-[#FF4E00]" />
+                    </div>
+                    <span className="text-white/55 text-sm">{f}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <a
+                href="#demo"
+                className={`w-full flex items-center justify-center gap-2 font-semibold py-3.5 rounded-xl transition-all duration-200 group text-sm ${
+                  plan.highlight
+                    ? "btn-primary"
+                    : "bg-white/6 hover:bg-white/10 text-white border border-white/10"
+                }`}
+              >
+                {plan.cta}
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+              </a>
             </motion.div>
           ))}
         </div>
 
-        <BlurFade inView delay={0.4}>
-          <p className="text-center text-slate-400 text-sm mt-10">
-            Garantía de devolución 30 días · Sin tarjeta de crédito · Onboarding incluido en todos los planes
-          </p>
-        </BlurFade>
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.5 }}
+          className="text-center text-white/25 text-sm mt-10"
+        >
+          Garantía de devolución 30 días · Sin tarjeta de crédito · Onboarding incluido en todos los planes
+        </motion.p>
       </div>
     </section>
   );
